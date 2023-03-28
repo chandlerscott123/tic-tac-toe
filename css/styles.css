@@ -8,10 +8,24 @@ body{
   justify-content: center;
 }
 
+.start{
+  display: grid;
+  grid-template: 150px/150px;
+  margin:auto;
+  justify-content: center;
+}
+
 .parent>div{
   border-style: solid;
   border-color: black;
   display: grid;
   place-items: center;
 
+}
+
+.hidden{
+  display:none;
+}
+.center{
+  text-align:center;
 }
