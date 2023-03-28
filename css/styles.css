@@ -1,0 +1,17 @@
+body{
+  margin: 30px;
+}
+.parent{
+  display: grid;
+  grid-template: repeat(3, 150px)/repeat(3,150px);
+  margin: auto;
+  justify-content: center;
+}
+
+.parent>div{
+  border-style: solid;
+  border-color: black;
+  display: grid;
+  place-items: center;
+
+}

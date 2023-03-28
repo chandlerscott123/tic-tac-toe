@@ -186,3 +186,10 @@ Game.prototype.isTurn =  function(){
     this.whoseTurn = this.player2;
   }
 }
+
+
+// window.addEventListener("load", function(){
+
+
+
+// });
