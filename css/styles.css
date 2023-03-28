@@ -10,9 +10,14 @@ body{
 
 .start{
   display: grid;
-  grid-template: 150px/150px;
+  grid-template-columns: 200px 150px;
   margin:auto;
   justify-content: center;
+}
+
+.start>div{
+  display:grid;
+  place-items: center;
 }
 
 .parent>div{
