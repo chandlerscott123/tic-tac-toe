@@ -2,8 +2,11 @@
 <html>
 <head>
   <title>Tic-Tac-Toe</title>
+  <script src="https://kit.fontawesome.com/57646d0824.js" crossorigin="anonymous"></script>
   <script src="js/scripts.js"></script>
   <link href="css/styles.css" rel="stylesheet" type="text/css">
+  
+
 </head>
 <body>
   <h1 class="center">Tic-Tac-Toe</h1>
@@ -13,21 +16,27 @@
       <p><strong>Would you like to play?</strong></p>
     </div>
     <div>
-      <button type="submit">Play Game</button>
+      <button type="button" id="start-btn">Play Game: 2 players</button>
+      <button type="submit" class="hidden">Play against computer</button>
     </div> 
   </div>
 
-  <div class="parent center hidden">
+  <div id="win-message"></div>
+
+  <div id="display-turn"></div>
+  <button type="reset" id="reset" class="hidden">Reset</button>
+
+  <div class="parent center hidden" id="board">
       
-    <div id="1" class="space"></div>
-    <div id="2" class="space"></div>
-    <div id="3" class="space"></div>
-    <div id="4" class="space"></div>
-    <div id="5" class="space"></div>
-    <div id="6" class="space"></div>
-    <div id="7" class="space"></div>
-    <div id="8" class="space"></div>
-    <div id="9" class="space"></div>
+    <div id="space1" class="space"></div>
+    <div id="space2" class="space"></div>
+    <div id="space3" class="space"></div>
+    <div id="space4" class="space"></div>
+    <div id="space5" class="space"></div>
+    <div id="space6" class="space"></div>
+    <div id="space7" class="space"></div>
+    <div id="space8" class="space"></div>
+    <div id="space9" class="space"></div>
   </div>
 </body>
 

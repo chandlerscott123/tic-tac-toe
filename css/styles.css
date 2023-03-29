@@ -20,6 +20,10 @@ body{
   place-items: center;
 }
 
+div.space>i{
+  font-size: 100%;
+}
+
 .parent>div{
   border-style: solid;
   border-color: black;

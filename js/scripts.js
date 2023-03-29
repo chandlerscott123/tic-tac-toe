@@ -8,6 +8,9 @@ function Player(){
   this.winner = false;
   //array to store spaces marked
   this.marked=[];
+
+  this.myTurn=false;
+  this.winner=false;
 }
 
 //access X or O value
@@ -25,11 +28,14 @@ function Space(x,y){
 
 //mutator: how players mark "X" or "O" on Space
 Space.prototype.mark = function(player){
-  this.marked=true;
-  //set playerMarked to the player that marked Space
-  this.playerMarked=player; 
-  //add location value to array ***NOTE: loc is initialized in Board() Object
-  player.marked.push(this.loc); 
+  
+  if(player.marked.indexOf(this.loc)){
+    this.marked=true;
+    //set playerMarked to the player that marked Space
+    this.playerMarked=player; 
+    //add location value to array ***NOTE: loc is initialized in Board() Object
+    player.marked.push(this.loc);
+  }
   
 };
 
@@ -64,6 +70,7 @@ Board.prototype.addSpace = function(space){
   //**NOTE: loc is initialized HERE
   space.loc = this.assignPosition();
   this.spaces[space.loc] = space;
+  console.log("gameboard filled: ");
 }
 
 
@@ -86,57 +93,23 @@ Board.prototype.findSpace = function(loc){
   }
 }
 
-//determines if a player has won the game
-Board.prototype.isWin =  function(player){
+// Update the isWin method
+Board.prototype.isWin = function (player) {
+  // Define all possible winning combinations
+  const winningCombinations = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9],
+    [1, 4, 7],
+    [2, 5, 8],
+    [3, 6, 9],
+    [1, 5, 9],
+    [3, 5, 7],
+  ];
 
-  let playerArr = player.marked;
-  let current=1;
-  let max=1;
-
-  //sort player.marked in ascending order
-  playerArr.sort(function(a, b) {
-    return a - b;
-  });
-
-  //check arr for 3 consecutive position values 
-  for (let i=0; i<playerArr.length; i++){
-
-    if(playerArr[i]===playerArr[i+1]+1){
-      current++;
-    }
-    else{
-      current = 1;
-    }
-
-    if(current>max){
-      max =  current;
-    }
-    
-    if(max==3){
-      break;
-    }
-
-
-    //def 3 consecutive diagonal position values 
-    if(playerArr.includes(1)&& playerArr.slice(playerArr.indexOf(1)).includes(5)&&playerArr.slice(playerArr.indexOf(5)).includes(9))
-    {
-      max=3;
-      break;
-    }
-    else if(playerArr.includes(3)&& playerArr.slice(playerArr.indexOf(3)).includes(5)&&playerArr.slice(playerArr.indexOf(5)).includes(7))
-    {
-      max=3;
-      break;
-    }
-  }
-
-  if(max===3){
-    return true;
-  }
-  else{
-    return false;
-  }
-  
+  return winningCombinations.some((combination) =>
+    combination.every((position) => player.marked.includes(position))
+  );
 };
 
 //game logic, sets 2 players and a board
@@ -150,46 +123,130 @@ function Game(){
   this.whoseTurn = null;
   
   this.gameOver = false;
+
+  if(this.player1.sign === "X"){
+    this.player2.sign = "O";
+  }
+  else if (this.player1.sign ==="O"){
+    this.player2.sign="X";
+  }
 }
 
 // defining a sigle turn: Player marks Space at loc
 Game.prototype.turn= function(player, loc)
-{
-  if (!this.gameBoard.spaces[loc].marked)
-  {
-    this.gameBoard.spaces[loc].mark(player);
-    this.currentTurn+=1;
-  }
+{ console.log(this.gameBoard.findSpace(loc).marked);
+  if (!this.gameBoard.findSpace(loc).marked)
+   {
+     this.gameBoard.findSpace(loc).mark(player);
+     this.currentTurn+=1;
+   }
   
 };
 
 //ends game if either player wins
-Game.prototype.setGameOver = function(){
-  if(this.gameBoard.isWin(this.player1)||this.gameBoard.isWin(this.player2)){
+Game.prototype.setGameOver = function () {
+  if (this.gameBoard.isWin(this.player1)) {
     this.gameOver = true;
-    if(this.gameBoard.isWin(this.player1)){
-      this.player1.winner=true;
-    }
-    else if (this.gameBoard.isWin(this.player2)){
-      this.player2.winner = true;
-    }
+    this.player1.winner = true;
+  } else if (this.gameBoard.isWin(this.player2)) {
+    this.gameOver = true;
+    this.player2.winner = true;
+  }
+};
 
+//player 1's turn when currentTurn is odd, player2 when even
+Game.prototype.isTurn = function () {
+  if (this.currentTurn % 2 === 1) {
+    return this.player1;
+  } else if (this.currentTurn % 2 === 0) {
+    return this.player2;
+  }
+};
+
+
+function processWin(game){
+  const winDiv = document.getElementById("win-message");
+  const player1WinMessage = "Congratulations, Player 1! You WIN!";
+  const player2WinMessage = "Congratulations, Player 2! You WIN!";
+  const resetBtn = document.getElementById("reset");
+  if(game.player1.winner){
+    winDiv.append(player1WinMessage);
+    resetBtn.removeAttribute("class");
+  }
+  else if(game.player2.winner){
+    winDiv.append(player2WinMessage);
+    resetBtn.removeAttribute("class");
   }
 }
 
-//player 1 will play when current turn is odd, player2 when even
-Game.prototype.isTurn =  function(){
-  if(this.currentTurn%2===1){
-    this.whoseTurn = this.player1;
-  }
-  else if(this.currentTurn%2===0){
-    this.whoseTurn = this.player2;
-  }
+
+
+
+function updateBoardDisplay(spaceNumber, player) {
+  const spaceId = "space" + spaceNumber;
+  const spaceElement = document.getElementById(spaceId);
+
+  const mark = document.createElement("i");
+  mark.setAttribute("class", player.getSign() === "X" ? "fa-solid fa-xmark" : "fa-solid fa-o");
+  spaceElement.append(mark);
 }
 
 
-// window.addEventListener("load", function(){
+function handlePlayerInput(game, position) {
+  const boardDiv = document.getElementById("board");
+  const turnDiv = document.getElementById("display-turn");
+  const player1Turn = "Player 1, it is your turn";
+  const player2Turn = "Player 2, it is your turn";
+
+  const currentPlayer = game.isTurn();
+  game.turn(currentPlayer, position);
+
+  if (!game.gameOver) {
+    updateBoardDisplay(position, currentPlayer);
+    game.setGameOver();
+
+    if (game.gameOver) {
+      processWin(game);
+      boardDiv.classList.add("hidden");
+    } else {
+      turnDiv.innerText = currentPlayer === game.player1 ? player2Turn : player1Turn;
+    }
+  }
+}
+
+function startGame(){
+  let currentGame = new Game();
+  currentGame.gameBoard.start();
+  const parent = document.querySelector('.parent');
+  const boardDiv = document.getElementById("board");
+  let num, spaceDiv;
+
+  console.log(currentGame.player1.getSign());
+  console.log(currentGame.player2.getSign());
+
+  boardDiv.classList.remove("hidden");
 
 
 
-// });
+  parent.addEventListener('click', function(event) {
+    if (event.target.classList.contains('space')) {
+
+      spaceDiv = event.target;
+      num = parseInt(event.target.id.substring(5));
+
+  
+      handlePlayerInput(currentGame, num);
+   }
+  });
+  }
+
+
+window.addEventListener("load", function(){
+
+  const start= document.getElementById("start-btn");
+
+
+  start.addEventListener("click",startGame);
+
+
+});
